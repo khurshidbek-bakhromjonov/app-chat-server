@@ -16,15 +16,6 @@ import java.util.Objects;
 @Service
 public class AwsService {
 
-    @Value("${cloud.aws.credentials.access-key}")
-    private String accessKey;
-
-    @Value("${cloud.aws.credentials.secret-key}")
-    private String secretKey;
-
-    @Value("${aws.region}")
-    private String region;
-
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
