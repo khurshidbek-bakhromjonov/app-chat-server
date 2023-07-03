@@ -1,14 +1,13 @@
 package uz.chatserver.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import uz.chatserver.model.Chat;
 import uz.chatserver.model.Message;
+import uz.chatserver.model.MessageType;
+import uz.chatserver.service.AwsService;
 import uz.chatserver.service.MessageService;
 
 import java.util.List;
@@ -18,15 +17,37 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
+    private final AwsService awsService;
 
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, AwsService awsService) {
         this.messageService = messageService;
+        this.awsService = awsService;
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addMessage(@RequestBody Message message) {
         try {
             Message createdMessage = messageService.addMessage(message);
+            return ResponseEntity.ok(createdMessage.getId());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadFileToS3(@RequestParam("file") MultipartFile file) {
+        try {
+            // Upload the file to AWS S3
+            String fileUrl = awsService.uploadFile(file);
+
+            // Create a new message with the file URL
+            Message message = new Message();
+            message.setContentType(MessageType.IMAGE);
+            message.setContent(fileUrl);
+
+            // Save the message
+            Message createdMessage = messageService.addMessage(message);
+
             return ResponseEntity.ok(createdMessage.getId());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
