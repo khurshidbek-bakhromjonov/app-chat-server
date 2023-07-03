@@ -1,0 +1,50 @@
+###
+POST http://localhost:8080/users/add
+Content-Type: application/json
+
+{
+  "username": "user_2"
+}
+
+###
+POST http://localhost:8080/chats/add
+Content-Type: application/json
+
+{
+  "name": "chat_1",
+  "users": [
+    {"id": 1},
+    {"id": 2}
+  ]
+}
+
+###
+POST http://localhost:8080/messages/add
+Content-Type: application/json
+
+{
+  "chat": {
+    "id" : 1
+  },
+  "author": {
+    "id" : 1
+  },
+  "contentType": "TEXT",
+  "content": "Hi"
+}
+
+###
+POST http://localhost:8080/chats/get
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+###
+POST http://localhost:8080/messages/get
+Content-Type: application/json
+
+{
+  "id" : 1
+}
