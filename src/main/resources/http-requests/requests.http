@@ -3,7 +3,7 @@ POST http://localhost:8080/users/add
 Content-Type: application/json
 
 {
-  "username": "user_2"
+  "username": "user_1"
 }
 
 ###
